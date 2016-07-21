@@ -199,11 +199,20 @@ class DBVideoPlayerController: NSObject, VideoTransportDelegate {
         self.prepareToPlayInView(movieView, overlay: overlayView)
         
         let nc = NSNotificationCenter.defaultCenter()
-        nc.addObserver(self, selector: "handleOrientationChange:", name: UIApplicationDidChangeStatusBarFrameNotification, object: nil)
-        nc.addObserver(self, selector: "handlePlaybackStalledNotification:", name: AVPlayerItemPlaybackStalledNotification, object: nil)
-        nc.addObserver(self, selector: "handleMoviePlayerPlayEndedNotification:", name: AVPlayerItemDidPlayToEndTimeNotification, object: nil)
+        nc.addObserver(self,
+                       selector: #selector(handleOrientationChange),
+                       name: UIApplicationDidChangeStatusBarFrameNotification,
+                       object: nil)
+        nc.addObserver(self,
+                       selector: #selector(handlePlaybackStalledNotification),
+                       name: AVPlayerItemPlaybackStalledNotification,
+                       object: nil)
+        nc.addObserver(self,
+                       selector: #selector(handleMoviePlayerPlayEndedNotification),
+                       name: AVPlayerItemDidPlayToEndTimeNotification,
+                       object: nil)
         
-        movieView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: "handleShowControlsTapGesture:"))
+        movieView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleShowControlsTapGesture)))
 
         boundaryObserver = (self.player?.addBoundaryTimeObserverForTimes([NSValue(CMTime: CMTimeMake(1, 10))], queue: nil, usingBlock: { [weak self] () -> Void in
                 nc.postNotificationName(DBVideoPlayBeganNotification, object: nil)
@@ -355,7 +364,7 @@ class DBVideoPlayerController: NSObject, VideoTransportDelegate {
         createStallTimer()
     }
     
-    private func checkLoadedRanges(timer: NSTimer) {
+    @objc private func checkLoadedRanges(timer: NSTimer) {
         // this method is called by the stallTimer, checking for sufficient download progress
         if hasPlayableLoadedMaterial() {
             // if we have enough additional data to play, kill the stall timer... we don't need it until there's another stall
@@ -377,7 +386,7 @@ class DBVideoPlayerController: NSObject, VideoTransportDelegate {
     }
     
     private func createStallTimer() {
-        stallTimer = NSTimer(timeInterval: 2.0, target:self, selector: "checkLoadedRanges", userInfo: nil, repeats: true)
+        stallTimer = NSTimer(timeInterval: 2.0, target:self, selector: #selector(checkLoadedRanges), userInfo: nil, repeats: true)
     }
     
     @objc private func handleVideoPlayBeganNotification(notification: NSNotification) {

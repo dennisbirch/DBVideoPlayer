@@ -91,7 +91,9 @@ class DBVideoControlsOverlayView: UIView {
     func setDisplayDuration(duration: NSTimeInterval) {
         displayDuration = duration
         if displayDuration == 0 {
-            NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: "hideControls", object: nil)
+            NSObject.cancelPreviousPerformRequestsWithTarget(self,
+                                                             selector: #selector(DBVideoControlsOverlayView.hideControls),
+                                                             object: nil)
         }
     }
     
@@ -125,7 +127,9 @@ class DBVideoControlsOverlayView: UIView {
 		}
 
 		if displayDuration > 0 {
-            performSelector("hideControls", withObject: nil, afterDelay: displayDuration)
+            performSelector(#selector(DBVideoControlsOverlayView.hideControls),
+                            withObject: nil,
+                            afterDelay: displayDuration)
         }
     }
     
@@ -135,7 +139,9 @@ class DBVideoControlsOverlayView: UIView {
             return
         }
         
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: "hideControls", object: nil)
+        NSObject.cancelPreviousPerformRequestsWithTarget(self,
+                                                         selector: #selector(DBVideoControlsOverlayView.hideControls),
+                                                         object: nil)
         isVisible = true
         alpha = 1.0
         NSNotificationCenter.defaultCenter().postNotificationName(DBVideoControlsVisibilityChangeNotification, object: nil)
@@ -147,7 +153,9 @@ class DBVideoControlsOverlayView: UIView {
             return
         }
         
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: "showControls", object: nil)
+        NSObject.cancelPreviousPerformRequestsWithTarget(self,
+                                                         selector: #selector(DBVideoControlsOverlayView.showControls),
+                                                         object: nil)
         isVisible = false
         alpha = 0
 
@@ -170,7 +178,9 @@ class DBVideoControlsOverlayView: UIView {
     
     @IBAction func scrubberTouchedDown(sender: AnyObject) {
 		isSeeking = true
-        NSObject.cancelPreviousPerformRequestsWithTarget(self, selector: "hideControls", object: nil)
+        NSObject.cancelPreviousPerformRequestsWithTarget(self,
+                                                         selector: #selector(DBVideoControlsOverlayView.hideControls),
+                                                         object: nil)
         delegate?.scrubbingStarted()
     }
     
@@ -222,40 +232,41 @@ class DBVideoControlsOverlayView: UIView {
 
     // MARK: Time Display
     
-    func timeStringForSeconds(time: NSTimeInterval, includeDecimal: Bool) -> String {
-        let secondsPerHour = 3600.00
-        let secondsPerMinute = 60.00
-        
-        var seconds = time
-        let hours = seconds/secondsPerHour
-        let hrsInt = Int(hours)
-        let hourSecs = Double(hrsInt) * secondsPerHour
-        seconds -= hourSecs
-        
-        let minutes = seconds/secondsPerMinute
-        let minInt = Int(minutes)
-        let minuteSecs = Double(minInt) * secondsPerMinute
-        seconds -= minuteSecs
-
-        var output = ""
-        if hrsInt > 0 {
-            output = "\(hrsInt):\(String(format: "%d", minInt))"
-        } else {
-            if minInt > 0 {
-				let format = (hrsInt > 0) ? "%02d" : "%d"
-                output = "\(String(format: format, minInt))"
-            }
-        }
-        
-        let secs = Int(seconds)
-        output += ":\(String(format: "%02d", secs))"
-        
-        if includeDecimal && timeAccuracy > 0 {
-            seconds = (seconds - Double(secs))
-            let decimals = String(format: "%0\(timeAccuracy)d", Int((seconds * pow(10.0, Double(timeAccuracy)))))
-            output += ".\(decimals)"
-        }
-        
-        return output
-    }    
+	func timeStringForSeconds(time: NSTimeInterval, includeDecimal: Bool) -> String {
+		let secondsPerHour = 3600.00
+		let secondsPerMinute = 60.00
+		
+		var seconds = time
+		let hours = seconds/secondsPerHour
+		let hrsInt = Int(hours)
+		let hourSecs = Double(hrsInt) * secondsPerHour
+		seconds -= hourSecs
+		
+		let minutes = seconds/secondsPerMinute
+		let minInt = Int(minutes)
+		let minuteSecs = Double(minInt) * secondsPerMinute
+		seconds -= minuteSecs
+		
+		var output = ""
+		if hrsInt > 0 {
+			output = "\(hrsInt):"
+		}
+		if minInt > 0 {
+			let format = (hrsInt > 0) ? "%02d" : "%d"
+			output += "\(String(format: format, minInt))"
+		} else {
+			output += "00"
+		}
+		
+		let secs = Int(seconds)
+		output += ":\(String(format: "%02d", secs))"
+		
+		if includeDecimal && timeAccuracy > 0 {
+			seconds = (seconds - Double(secs))
+			let decimals = String(format: "%0\(timeAccuracy)d", Int((seconds * pow(10.0, Double(timeAccuracy)))))
+			output += ".\(decimals)"
+		}
+		
+		return output
+	}
 }

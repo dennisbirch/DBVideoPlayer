@@ -28,9 +28,18 @@ class MoviePresentationViewController: UIViewController {
         videoPlayerController?.displayControlsOnTap = true
 		videoPlayerController?.autoplay = true
 		
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveDBVideoControllerStateChangeNotification:", name: DBVideoControllerStateChangeNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveDBVideoControlsVisibiiltyChangeNotification:", name: DBVideoControlsVisibilityChangeNotification, object: nil)
-		NSNotificationCenter.defaultCenter().addObserver(self, selector: "didReceiveDBVideoPlayBeganNotification:", name: DBVideoPlayBeganNotification, object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self,
+		                                                 selector: #selector(didReceiveDBVideoControllerStateChangeNotification),
+		                                                 name: DBVideoControllerStateChangeNotification,
+		                                                 object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self,
+		                                                 selector: #selector(didReceiveDBVideoControlsVisibiiltyChangeNotification),
+		                                                 name: DBVideoControlsVisibilityChangeNotification,
+		                                                 object: nil)
+		NSNotificationCenter.defaultCenter().addObserver(self,
+		                                                 selector: #selector(didReceiveDBVideoPlayBeganNotification),
+		                                                 name: DBVideoPlayBeganNotification,
+		                                                 object: nil)
    }
 	
 	override func viewWillDisappear(animated: Bool) {
